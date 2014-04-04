@@ -4,8 +4,9 @@ import java.util.regex.Pattern;
 
 /**
  * Object renomeur
+ * 
  * @author justin
- *
+ * 
  */
 
 public class Renomeur {
@@ -28,7 +29,6 @@ public class Renomeur {
 	Pattern pQualiteD = Pattern.compile("\\.?[0-9]{3,4}p");
 	Pattern pDateC = Pattern.compile("\\[[0-9]{4}\\]");
 	Pattern pDateD = Pattern.compile("\\.[0-9]{4}\\.");
-	
 
 	public Renomeur(File fic) {
 		this.f = fic;
@@ -38,8 +38,9 @@ public class Renomeur {
 		trouverParams();
 
 	}
+
 	private void trouverParams() {
-		if (estFic){
+		if (estFic) {
 			trouverExt();
 		}
 		nettoyerEspaces();
@@ -48,34 +49,38 @@ public class Renomeur {
 		trouverTitre();
 		formatter();
 	}
-	
-	private void nettoyerEspaces(){
+
+	private void nettoyerEspaces() {
 		this.origine = this.origine.replace(" ", ".");
 		this.origine = this.origine.replace("(", "[");
 		this.origine = this.origine.replace(")", "]");
 	}
+
 	private void trouverQualite() {
 		p = pQualiteC;
-		//p = Pattern.compile("\\[[0-9]{3,4}p\\]");
+		// p = Pattern.compile("\\[[0-9]{3,4}p\\]");
 		m = p.matcher(this.origine);
-		if (m.find()){
+		if (m.find()) {
 			this.qualiteTrouve = true;
 			this.qualite = this.origine.substring(m.start(), m.end());
 			this.indexQualite = m.start();
-		}else{
+		} else {
 			p = pQualiteD;
-			//p = Pattern.compile("\\.?[0-9]{3,4}p");
+			// p = Pattern.compile("\\.?[0-9]{3,4}p");
 			m = p.matcher(this.origine);
-			if (m.find()){
+			if (m.find()) {
 				this.qualiteTrouve = true;
-				this.qualite = ("[" + this.origine.substring(m.start(), m.end()) + "]" ).replace(".", "");
+				this.qualite = ("["
+						+ this.origine.substring(m.start(), m.end()) + "]")
+						.replace(".", "");
 				this.indexQualite = m.start();
 			}
 		}
 	}
+
 	private void trouverDate() {
 		p = pDateC;
-		//p = Pattern.compile("\\[[0-9]{4}\\]"); // [2001]
+		// p = Pattern.compile("\\[[0-9]{4}\\]"); // [2001]
 		m = p.matcher(this.origine);
 		if (m.find()) {
 			this.dateTrouve = true;
@@ -83,49 +88,55 @@ public class Renomeur {
 			this.indexDate = m.start();
 		} else {
 			p = pDateD;
-			//p = Pattern.compile("\\.[0-9]{4}\\."); // .2001.
+			// p = Pattern.compile("\\.[0-9]{4}\\."); // .2001.
 			m = p.matcher(this.origine);
 			if (m.find()) {
 				this.dateTrouve = true;
-				this.date = "[" + this.origine.substring((m.start() + 1), (m.end() -1)) + "]";
+				this.date = "["
+						+ this.origine
+								.substring((m.start() + 1), (m.end() - 1))
+						+ "]";
 				this.indexDate = m.start();
 			}
 		}
 	}
+
 	private void trouverTitre() {
-		if (dateTrouve){
+		if (dateTrouve) {
 			this.titre = origine.substring(0, indexDate);
-		}else if (qualiteTrouve){
+		} else if (qualiteTrouve) {
 			this.titre = origine.substring(0, indexQualite);
-		}else if (estFic){
+		} else if (estFic) {
 			this.titre = origine.substring(0, origine.length() - ext.length());
-		}else{
+		} else {
 			this.titre = origine;
 		}
-		if (this.titre.endsWith(".")){
-			this.titre = titre.substring(0, titre.length() -1);
+		if (this.titre.endsWith(".")) {
+			this.titre = titre.substring(0, titre.length() - 1);
 		}
 	}
+
 	private void trouverExt() {
 		this.ext = this.origine.substring(this.origine.lastIndexOf('.'));
-		
+
 	}
-	
-	private void formatter(){
+
+	private void formatter() {
 		nomFinal = this.titre;
 		if (dateTrouve)
-			nomFinal+=this.date;
+			nomFinal += this.date;
 		if (qualiteTrouve)
-			nomFinal+=this.qualite;
+			nomFinal += this.qualite;
 		if (estFic)
-			nomFinal+=this.ext;
+			nomFinal += this.ext;
 		if (!nomFinal.equals(origine))
 			changement = true;
 	}
-	public boolean getChangement(){
+
+	public boolean getChangement() {
 		return changement;
 	}
-	
+
 	public String getNom() {
 		return nomFinal;
 	}
